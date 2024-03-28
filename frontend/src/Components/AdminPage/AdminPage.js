@@ -3,6 +3,7 @@ import { MDBContainer, MDBNavbar, MDBNavbarBrand, MDBNavbarToggler, MDBNavbarNav
 import Feedback from '../Feedback/Feedback';
 import CreateUser from '../CreateUser/CreateUser';
 import './AdminPage.css';
+import Profile from '../Profile/Profile';
 
 function AdminPage() {
   const [openNavSecond, setOpenNavSecond] = useState(false);
@@ -24,7 +25,7 @@ function AdminPage() {
       case 'timesheet':
         return <h1>Timesheet</h1>;
       case 'profile':
-        return <h1>Profile</h1>;
+        return <Profile />;
       default:
         return null;
     }
@@ -42,25 +43,37 @@ function AdminPage() {
             >
               <MDBIcon icon='bars' fas />
             </MDBNavbarToggler>
-            <MDBCollapse navbar open={openNavSecond}>
+            <div>
+              <MDBCollapse navbar open={openNavSecond}>
               <MDBNavbarNav>
-                <MDBNavbarLink className="navbar-link" active={selectedOption === 'home'} onClick={() => handleOptionClick('home')}>
-                  Home
-                </MDBNavbarLink>
-                <MDBNavbarLink className="navbar-link" active={selectedOption === 'create-user'} onClick={() => handleOptionClick('create-user')}>
-                  Create User
-                </MDBNavbarLink>
-                <MDBNavbarLink className="navbar-link" active={selectedOption === 'feedback'} onClick={() => handleOptionClick('feedback')}>
-                  Feedback
-                </MDBNavbarLink>
-                <MDBNavbarLink className="navbar-link" active={selectedOption === 'timesheet'} onClick={() => handleOptionClick('timesheet')}>
-                  Timesheet
-                </MDBNavbarLink>
-                <MDBNavbarLink className="navbar-link" active={selectedOption === 'profile'} onClick={() => handleOptionClick('profile')}>
-                  Profile
-                </MDBNavbarLink>
+                <MDBNavbarItem>
+                  <MDBNavbarLink className="navbar-link" active={selectedOption === 'home'} onClick={() => handleOptionClick('home')}>
+                    Home
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink className="navbar-link" active={selectedOption === 'create-user'} onClick={() => handleOptionClick('create-user')}>
+                    Create User
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink className="navbar-link" active={selectedOption === 'feedback'} onClick={() => handleOptionClick('feedback')}>
+                    Feedback
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink className="navbar-link" active={selectedOption === 'timesheet'} onClick={() => handleOptionClick('timesheet')}>
+                    Timesheet
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink className="navbar-link" active={selectedOption === 'profile'} onClick={() => handleOptionClick('profile')}>
+                    Profile
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
               </MDBNavbarNav>
             </MDBCollapse>
+            </div>
           </MDBContainer>
         </MDBNavbar>
       </div>

@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ChangePassword from './Components/Change Password/ChangePassword';
 import CreateUser from './Components/CreateUser/CreateUser';
 import Feedback from './Components/Feedback/Feedback';
+import Profile from './Components/Profile/Profile';
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
       <Route path="/changepassword" element={<ChangePassword />}/>
       <Route path="/create-user" element={<CreateUser />} />
       <Route path="/feedback" element={<Feedback />} />
+      <Route path="/feedback" element={<Feedback />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
     </BrowserRouter>
   );
