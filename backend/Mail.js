@@ -22,7 +22,7 @@ router.post('/send-email', async (req, res) => {
             from: 'mutukundu@jmangroup.com',
             to: email,
             subject: 'Account Created',
-            text: `Your account has been created successfully. Your temporary password is: ${password}. Please use this password to log in and ${link} use this link to reset your password.`,
+            text: `Your account has been created successfully. Your temporary password is: ${password}\n\n Please use this password to log in and ${link} use this link to reset your password.`,
             html: `<p>Your account has been created successfully.Your temporary password is: <strong>${password}</strong>. Please use this password to log in and ${link} use this link to  reset your password.</p>`
         };
 
@@ -30,16 +30,15 @@ router.post('/send-email', async (req, res) => {
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error('Error sending email:', error);
-                res.status(500).send('Error sending email');
-                
+                res.status(500).json({ error: 'Error sending email' });
             } else {
                 console.log('Email sent:', info.response);
-                res.status(200).send('Email sent successfully');
+                res.status(200).json({ message: 'Email sent successfully' });
             }
         });
     } catch (error) {
         console.error('Error sending email:', error);
-        res.status(500).send('Error sending email');
+        res.status(500).json({ error: 'Error sending email' });
     }
 });
 

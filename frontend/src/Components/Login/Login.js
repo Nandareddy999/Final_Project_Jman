@@ -6,8 +6,7 @@ import {
   MDBInput
 } from 'mdb-react-ui-kit';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navigate } from 'react-router-dom'; 
-import CreateUser from '../CreateUser/CreateUser';
+import AdminPage from '../AdminPage/AdminPage';
 import "./Login.css";
 
 function Login() {
@@ -47,7 +46,7 @@ function Login() {
 
   // If logged in, navigate to '/create-user'
   if (loggedIn) {
-    return <CreateUser />;
+    return <AdminPage />;
   }
 
   return (

@@ -1,0 +1,38 @@
+:root {
+    --navbar-bg-color: #ffffff; /* Background color of the navbar */
+    --navbar-text-color: #333333; /* Text color of the navbar links */
+    --navbar-text-hover-color: #555555; /* Text color of the navbar links on hover */
+    --navbar-active-text-color: #007bff; /* Text color of the active navbar link */
+  }
+  
+  .navbar-top {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Ensures it's above other content */
+    background-color: var(--navbar-bg-color); /* Set background color using CSS variable */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+    padding: 10px 20px; /* Adjust padding as needed */
+  }
+  
+  .navbar-nav {
+    margin-left: auto; /* Move the navbar links to the right */
+  }
+  
+  .navbar-link {
+    margin-right: 20px; /* Adjust spacing between navbar links */
+    color: var(--navbar-text-color); /* Set link color using CSS variable */
+    text-decoration: none;
+  }
+  
+  .navbar-link:hover {
+    color: var(--navbar-text-hover-color); /* Set link color on hover using CSS variable */
+    text-decoration: underline;
+  }
+  
+  /* Customize active link */
+  .navbar-link.active {
+    color: var(--navbar-active-text-color); /* Set active link color using CSS variable */
+    font-weight: bold; /* Make active link bold */
+  }
+  
