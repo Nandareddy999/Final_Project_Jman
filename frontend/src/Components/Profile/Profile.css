@@ -1,0 +1,21 @@
+.profile-page{
+    text-align: center;
+}
+
+.profile-info {
+    display: inline-block;
+    border: 2px solid #4CAF50; /* Green border */
+    border-radius: 10px; /* Rounded border */
+    padding: 20px;
+    margin-top: 20px;
+    background-color: #f2f2f2; /* Light gray background */
+}
+
+.profile-item {
+    margin-bottom: 10px;
+    color: #333; /* Dark text color */
+}
+
+.profile-item strong {
+    color: #4CAF50; /* Green text color for labels */
+}

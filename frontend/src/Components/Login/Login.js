@@ -7,46 +7,62 @@ import {
 } from 'mdb-react-ui-kit';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AdminPage from '../AdminPage/AdminPage';
+import UserPage from '../UserPage/UserPage';
 import "./Login.css";
 
 function Login() {
-  // State to hold form data
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    role: 'user'
   });
 
-  // State to track successful login
   const [loggedIn, setLoggedIn] = useState(false);
+  const [userFound, setUserFound] = useState(false);
 
-  // Function to handle changes in input fields
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Update formData state with the new value
     setFormData({
       ...formData,
       [name]: value
     });
   };
 
-  // Function to handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Your validation logic and form submission code here
-    console.log('Form submitted:', formData);
-    // Check if admin credentials are entered (example)
-    if (formData.email === 'admin@example.com' && formData.password === 'admin123') {
-      // Set loggedIn to true
-      setLoggedIn(true);
-    } else {
-      // Handle incorrect credentials
-      alert('Invalid email or password');
+
+    try {
+      const response = await fetch(`http://localhost:5000/${formData.role}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const userData = await response.json();
+
+      if (response.status === 200) {
+        setLoggedIn(true);
+        setUserFound(true);
+        localStorage.setItem('user', JSON.stringify(formData));
+      } else {
+        alert('Invalid email or password');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while logging in');
     }
   };
 
-  // If logged in, navigate to '/create-user'
-  if (loggedIn) {
+  if (loggedIn && userFound && formData.role === 'admin') {
     return <AdminPage />;
+  } else if (loggedIn && userFound && formData.role === 'user') {
+    return <UserPage />;
   }
 
   return (
@@ -60,9 +76,7 @@ function Login() {
             </div>
             <p>Please login to your account</p>
 
-            {/* Form starts here */}
             <form onSubmit={handleSubmit}>
-              {/* Email input */}
               <label className='mb-2'>Email address</label>
               <MDBInput
                 wrapperClass='mb-1'
@@ -75,7 +89,6 @@ function Login() {
                 required
               />
 
-              {/* Password input */}
               <label className='mb-2'>Password</label>
               <MDBInput
                 wrapperClass='mb-1'
@@ -88,17 +101,22 @@ function Login() {
                 required
               />
 
-              {/* Sign in button */}
+              <div className="mb-3">
+                <label className="form-label">Select Role:</label>
+                <select className="form-select" name="role" value={formData.role} onChange={handleChange}>
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
               <div className="text-center pt-1 mb-5 pb-1">
                 <button type="submit" className="mb-4 p-2 w-100 gradient-custom-2">Sign in</button>
                 <a className="text-muted" href="#!">Forgot password?</a>
               </div>
             </form>
-            {/* Form ends here */}
           </div>
         </MDBCol>
 
-        {/* Right column */}
         <MDBCol col='6' className="mb-5">
           <div className="d-flex flex-column  justify-content-center gradient-custom-2 h-100 mb-4">
             <div className="text-white px-3 py-4 p-md-5 mx-md-4">

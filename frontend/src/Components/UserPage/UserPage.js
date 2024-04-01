@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { MDBContainer, MDBNavbar, MDBNavbarToggler, MDBNavbarNav, MDBNavbarItem, MDBNavbarLink, MDBIcon, MDBCollapse } from 'mdb-react-ui-kit';
-import Feedback from '../Feedback/Feedback';
-import CreateUser from '../CreateUser/CreateUser';
-import './AdminPage.css';
+import './UserPage.css';
 import Profile from '../Profile/Profile';
 import Timesheet from '../Timesheet/Timesheet';
 import Home from '../Home/Home';
+import GiveFeedback from '../Give Feedback/GiveFeedback';
+import GeneralFeedback from '../General Feedback/GeneralFeedback';
 
-function AdminPage() {
+function UserPage() {
   const [openNavSecond, setOpenNavSecond] = useState(false);
   const [selectedOption, setSelectedOption] = useState('home'); // Set initial value to 'home'
 
@@ -20,10 +20,10 @@ function AdminPage() {
     switch (selectedOption) {
       case 'home':
         return <Home />;
-      case 'create-user':
-        return <CreateUser />;
-      case 'feedback':
-        return <Feedback />;
+      case 'GiveFeedback':
+        return <GiveFeedback />;
+      case 'GeneralFeedback':
+        return <GeneralFeedback />;
       case 'timesheet':
         return <Timesheet />;
       case 'profile':
@@ -54,13 +54,13 @@ function AdminPage() {
                     </MDBNavbarLink>
                   </MDBNavbarItem>
                   <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'create-user'} onClick={() => handleOptionClick('create-user')}>
-                      Create User
+                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'GiveFeedback'} onClick={() => handleOptionClick('GiveFeedback')}>
+                      Give Feedback
                     </MDBNavbarLink>
                   </MDBNavbarItem>
                   <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'feedback'} onClick={() => handleOptionClick('feedback')}>
-                      Feedback
+                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'GeneralFeedback'} onClick={() => handleOptionClick('GeneralFeedback')}>
+                      General Feedback 
                     </MDBNavbarLink>
                   </MDBNavbarItem>
                   <MDBNavbarItem>
@@ -87,4 +87,4 @@ function AdminPage() {
   );
 }
 
-export default AdminPage;
+export default UserPage;
