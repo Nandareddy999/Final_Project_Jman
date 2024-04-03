@@ -5,15 +5,21 @@ import CreateUser from '../CreateUser/CreateUser';
 import './AdminPage.css';
 import Profile from '../Profile/Profile';
 import Timesheet from '../Timesheet/Timesheet';
+import Login from "../Login/Login";
 import Home from '../Home/Home';
 
 function AdminPage() {
   const [openNavSecond, setOpenNavSecond] = useState(false);
   const [selectedOption, setSelectedOption] = useState('home'); // Set initial value to 'home'
-
+  const [loggedIn, setLoggedIn] = useState(true);
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setOpenNavSecond(false); // Close the navbar when an option is selected
+  };
+
+  const handleLogout = () => {
+    // Perform logout actions here, such as clearing local storage, etc.
+    setLoggedIn(false); // Update loggedIn state to false
   };
 
   const renderComponent = () => {
@@ -32,6 +38,10 @@ function AdminPage() {
         return null;
     }
   };
+  
+  if (!loggedIn) {
+    return <Login />;
+  }
 
   return (
     <div>
@@ -71,6 +81,11 @@ function AdminPage() {
                   <MDBNavbarItem>
                     <MDBNavbarLink className="navbar-link" active={selectedOption === 'profile'} onClick={() => handleOptionClick('profile')}>
                       Profile
+                    </MDBNavbarLink>
+                  </MDBNavbarItem>
+                  <MDBNavbarItem>
+                    <MDBNavbarLink className="navbar-link" onClick={handleLogout}>
+                      Logout
                     </MDBNavbarLink>
                   </MDBNavbarItem>
                 </MDBNavbarNav>

@@ -5,32 +5,64 @@ import './Feedback.css';
 function Feedback() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState('');
+  const [selectedUserEmail, setSelectedUserEmail] = useState('');
+  const [selectedUserName, setSelectedUserName] = useState('');
   const [questions, setQuestions] = useState([]);
   const [newQuestionInputs, setNewQuestionInputs] = useState([0]);
+  const [successMessage, setSuccessMessage] = useState(null);
 
-  // Fetching users from MongoDB on component mount
   useEffect(() => {
-    axios
-      .get('http://localhost:5000/user') // Adjust the API endpoint based on your backend setup
-      .then(response => {
-        setUsers(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching users:', error);
-      });
+    fetchUsers();
   }, []);
 
-  // Function to handle user selection
-  const handleUserSelect = e => {
-    setSelectedUser(e.target.value);
+  useEffect(() => {
+    if (selectedUser !== '') {
+      const selectedUserData = users.find(user => user._id === selectedUser);
+      if (selectedUserData) {
+        setSelectedUserEmail(selectedUserData.email);
+        setSelectedUserName(selectedUserData.firstname + ' ' + selectedUserData.lastname);
+      } else {
+        setSelectedUserEmail('');
+        setSelectedUserName('');
+      }
+    }
+  }, [selectedUser, users]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/user');
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      const data = await response.json();
+      setUsers(data);
+      if (data.length > 0) {
+        setSelectedUser(data[0]._id);
+        setSelectedUserEmail(data[0].email);
+        setSelectedUserName(data[0].firstname + ' ' + data[0].lastname);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
   };
 
-  // Function to add a new question input
+  const handleUserChange = e => {
+    const selectedUserId = e.target.value;
+    setSelectedUser(selectedUserId);
+    const selectedUserData = users.find(user => user._id === selectedUserId);
+    if (selectedUserData) {
+      setSelectedUserEmail(selectedUserData.email);
+      setSelectedUserName(selectedUserData.firstname + ' ' + selectedUserData.lastname);
+    } else {
+      setSelectedUserEmail('');
+      setSelectedUserName('');
+    }
+  };
+
   const addQuestionInput = () => {
     setNewQuestionInputs([...newQuestionInputs, newQuestionInputs.length]);
   };
 
-  // Function to remove a question input
   const removeQuestionInput = index => {
     if (newQuestionInputs.length === 1) {
       return;
@@ -41,35 +73,66 @@ function Feedback() {
     setQuestions(questions.filter((_, i) => i !== index));
   };
 
-  // Function to handle question input change
   const handleQuestionChange = (index, e) => {
     const updatedQuestions = [...questions];
     updatedQuestions[index] = e.target.value;
     setQuestions(updatedQuestions);
   };
 
-  // Function to submit the feedback form
   const handleSubmit = () => {
-    // You can implement the submission logic here, such as sending the data to the server
-    console.log('Feedback form submitted:', { user: selectedUser, questions });
-    // Reset form state after submission if needed
-    setSelectedUser('');
-    setQuestions([]);
-    setNewQuestionInputs([0]);
+    // Check if a user is selected
+    if (!selectedUser) {
+      alert('Please select a user');
+      return;
+    }
+  
+    // Check if at least one question is entered
+    if (questions.length === 0 || questions.every(question => question.trim() === '')) {
+      alert('Please enter at least one question');
+      return;
+    }
+  
+    // If validation passes, submit the feedback
+    axios.post('http://localhost:5000/submit-admin-feedback', {
+      email: selectedUserEmail,
+      username: selectedUserName,
+      questions: questions // Sending questions array to the backend
+      
+    })
+    .then(response => {
+      console.log('Feedback submitted successfully:', response.data); // Check the response data in the console
+      setSuccessMessage('Feedback submitted successfully');
+      setSelectedUser('');
+      setSelectedUserEmail('');
+      setSelectedUserName('');
+      setQuestions([]);
+      setNewQuestionInputs([0]);
+    })
+    .catch(error => {
+      console.error('Error submitting feedback:', error);
+      // Handle error if necessary
+    });
   };
+  
 
   return (
-    <div className="feedback-container">
-      <h2 className="feedback-heading">Feedback Form</h2>
-      <div className="feedback-group">
-        <label htmlFor="userSelect" className="feedback-label">
+    <div className="adminfeedback-container">
+      <h2 className="adminfeedback-heading">Feedback Form</h2>
+      {successMessage && 
+        <div className="alert alert-success alert-dismissible fade show custom-alert" role="alert">
+          {successMessage}
+          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => setSuccessMessage(null)}></button>
+        </div>
+      }
+      <div className="adminfeedback-group">
+        <label htmlFor="userSelect" className="adminfeedback-label">
           Select User:
         </label>
         <select
           id="userSelect"
-          className="feedback-select"
+          className="adminfeedback-select"
           value={selectedUser}
-          onChange={handleUserSelect}
+          onChange={handleUserChange}
         >
           <option value="">Select User</option>
           {users.map(user => (
@@ -79,13 +142,24 @@ function Feedback() {
           ))}
         </select>
       </div>
-      <div className="feedback-group">
-        <label className="feedback-label">Feedback Questions:</label>
+      {selectedUserEmail && (
+        <div className="adminfeedback-group">
+          <label className="adminfeedback-label">Selected User's Email:</label>
+          <input
+            type="text"
+            className="adminfeedback-input"
+            value={selectedUserEmail}
+            readOnly={true}
+          />
+        </div>
+      )}
+      <div className="adminfeedback-group">
+        <label className="adminfeedback-label">Feedback Questions:</label>
         {newQuestionInputs.map((inputIndex, index) => (
-          <div key={index} className="feedback-input-group">
+          <div key={index} className="adminfeedback-input-group">
             <input
               type="text"
-              className="feedback-input"
+              className="adminfeedback-input"
               value={questions[index] || ''}
               onChange={e => handleQuestionChange(index, e)}
               placeholder="Enter question"
@@ -93,7 +167,7 @@ function Feedback() {
             />
             {index === 0 ? null : (
               <button
-                className="feedback-btn-delete"
+                className="adminfeedback-btn-delete"
                 onClick={() => removeQuestionInput(index)}
                 disabled={index === 0}
               >
@@ -102,12 +176,12 @@ function Feedback() {
             )}
           </div>
         ))}
-        <button className="feedback-btn feedback-btn-add" onClick={addQuestionInput}>
+        <button className="adminfeedback-btn adminfeedback-btn-add" onClick={addQuestionInput}>
           Add Question
         </button>
       </div>
-      <div className="feedback-group">
-        <button className="feedback-btn-submit" onClick={handleSubmit}>
+      <div className="adminfeedback-group">
+        <button className="adminfeedback-btn-submit" onClick={handleSubmit}>
           Submit
         </button>
       </div>
@@ -116,3 +190,5 @@ function Feedback() {
 }
 
 export default Feedback;
+
+

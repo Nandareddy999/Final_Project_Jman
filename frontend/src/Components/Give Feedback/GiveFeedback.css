@@ -1,0 +1,61 @@
+/* GiveFeedback component styles */
+
+.feedback-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .feedback-form {
+    width: 80%;
+    max-width: 500px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .feedback-form h2 {
+    text-align: center;
+  }
+  
+  .feedback-form ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .feedback-form li {
+    margin-bottom: 10px;
+  }
+  
+  .feedback-form input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .feedback-form button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .alert {
+    width: 80%;
+    max-width: 500px;
+    margin-top: 20px;
+    padding: 10px 15px;
+    border: 1px solid #2ecc71; /* Green border */
+    border-radius: 5px;
+    background-color: #2ecc71; /* Green background */
+    color: #fff;
+    text-align: center;
+  }
+  
+  

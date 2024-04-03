@@ -1,24 +1,27 @@
 import React, { useState } from 'react';
 import "./Timesheet.css";
+import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 function Timesheet() {
-    const [startDate, setStartDate] = useState(new Date('2024-01-28')); // Initial start date
-    const [endDate, setEndDate] = useState(new Date('2024-02-03')); // Initial end date
-    const [showExtension, setShowExtension] = useState(false); // State to control the visibility of Allocation Extension section
+    const today = new Date();
+    const monday = new Date(today);
+    monday.setDate(monday.getDate() - (today.getDay() + 6) % 7);
+    const sunday = new Date(today);
+    sunday.setDate(monday.getDate() + 6);
 
-    // Dummy data for hours, replace with actual data and handle functions
+    const [startDate, setStartDate] = useState(monday);
+    const [endDate, setEndDate] = useState(sunday); 
+    const [showExtension, setShowExtension] = useState(false);
     const [hoursData, setHoursData] = useState({
-        bauActivity: [, , , , , , ],
+        bauActivity: [, , , , , ,  ],
         salesActivity: [, , , , , , ],
     });
 
-    // Function to handle hour change for a specific activity on a specific day
     const handleHourChange = (activity, dayIndex, e) => {
         const value = e.target.value;
-        // Validate input to allow only numeric characters or an empty string
         if (/^\d*$/.test(value) && parseInt(value) <= 10 || value === '') {
             const newHoursData = { ...hoursData };
             newHoursData[activity][dayIndex] = value;
@@ -26,7 +29,36 @@ function Timesheet() {
         }
     };
 
-    // Function to calculate total hours for each day of the week
+    const saveTimesheet = async () => {
+        try {
+            const timesheetData = {
+                startDate: startDate,
+                endDate: endDate,
+                activities: [
+                    {
+                        name: 'BAU Activity',
+                        hours: hoursData.bauActivity,
+                        comment: document.getElementById('bauComment').value // Get BAU Activity comment
+                    },
+                    {
+                        name: 'Sales Activity',
+                        hours: hoursData.salesActivity,
+                        comment: document.getElementById('salesComment').value // Get Sales Activity comment
+                    }
+                ],
+                totalHoursPerDay: calculateTotalHoursPerDay(),
+                totalHours: calculateGrandTotalHours()
+            };
+            const response = await axios.post('http://localhost:5000/timesheet-data', timesheetData);
+            console.log(response.data); // Log the response from the server
+            // Optionally, you can show a success message to the user
+        } catch (error) {
+            console.error('Error saving timesheet:', error.message);
+            // Optionally, you can show an error message to the user
+        }
+    };
+    
+
     const calculateTotalHoursPerDay = () => {
         return [...Array(7)].map((_, index) => {
             const bauHours = parseInt(hoursData.bauActivity[index]) || 0;
@@ -34,7 +66,7 @@ function Timesheet() {
             return bauHours + salesHours;
         });
     };
-    // Function to calculate total hours for a specific activity
+
     const calculateTotalHours = (activity) => {
         const total = hoursData[activity].reduce((acc, cur) => {
             const parsedValue = parseInt(cur);
@@ -43,16 +75,13 @@ function Timesheet() {
             }
             return acc;
         }, 0);
-
-        return isNaN(total) ? '' : total;
+        return isNaN(total) ? 0 : total;
     };
 
-    // Function to calculate grand total hours for the week
     const calculateGrandTotalHours = () => {
         const bauTotal = calculateTotalHours('bauActivity');
         const salesTotal = calculateTotalHours('salesActivity');
-        const grandTotal = bauTotal + salesTotal;
-        return isNaN(grandTotal) ? '' : grandTotal;
+        return bauTotal + salesTotal;
     };
 
 
@@ -137,7 +166,7 @@ function Timesheet() {
                                     <option value="task2">Task2</option>
                                 </select>
                             </td>
-                            <td colSpan={2}><input type="text" className="form-control" /></td>
+                            <td colSpan={2}><input type="text" id="bauComment" className="form-control" /></td> {/* Add ID for BAU Activity comment input */}
                             {[...Array(7)].map((_, index) => (
                                 <td key={index} className="td2">
                                     <input
@@ -151,7 +180,6 @@ function Timesheet() {
                                     />
                                 </td>
                             ))}
-
                             <td style={{ color: calculateTotalHours('bauActivity') > 10 ? 'red' : 'black' }}>
                                 {calculateTotalHours('bauActivity')}
                             </td>
@@ -171,7 +199,7 @@ function Timesheet() {
                                     <option value="task2">Task2</option>
                                 </select>
                             </td>
-                            <td colSpan={2}><input type="text" className="form-control" /></td>
+                            <td colSpan={2}><input type="text" id="salesComment" className="form-control" /></td> {/* Add ID for Sales Activity comment input */}
                             {[...Array(7)].map((_, index) => (
                                 <td key={index} className="td2">
                                     <input
@@ -185,11 +213,9 @@ function Timesheet() {
                                     />
                                 </td>
                             ))}
-
                             <td style={{ color: calculateTotalHours('salesActivity') > 10 ? 'red' : 'black' }}>
                                 {calculateTotalHours('salesActivity')}
                             </td>
-
                             <td className="td2"><input type="text" className="form-control" /></td>
                         </tr>
                         <tr>
@@ -242,7 +268,7 @@ function Timesheet() {
                 </table>
             </div>
             <div className='end'>
-                <button className='btn1'>Save</button>
+                <button className='btn1' onClick={saveTimesheet}>Save</button>
                 <button className='btn2'>Submit <FontAwesomeIcon icon={faArrowRight} className='right-btn'/></button>
             </div>
         </div>
@@ -250,3 +276,4 @@ function Timesheet() {
 }
 
 export default Timesheet;
+

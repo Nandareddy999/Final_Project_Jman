@@ -8,7 +8,9 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AdminPage from '../AdminPage/AdminPage';
 import UserPage from '../UserPage/UserPage';
+import ForgetPassword from "../ForgetPassword/ForgetPassword";
 import "./Login.css";
+
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -111,7 +113,7 @@ function Login() {
 
               <div className="text-center pt-1 mb-5 pb-1">
                 <button type="submit" className="mb-4 p-2 w-100 gradient-custom-2">Sign in</button>
-                <a className="text-muted" href="#!">Forgot password?</a>
+                <a href="/forget-password" className="text-muted">Forgot password?</a>
               </div>
             </form>
           </div>

@@ -63,7 +63,7 @@
   }
    */
 
-   .feedback-container {
+   .adminfeedback-container {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
@@ -72,37 +72,40 @@
     border-radius: 4px;
     background-color: #ffffff;
   }
-  
-  .feedback-heading {
+  .adminfeedback-heading {
     margin-top: 0;
     text-align: center;
   }
   
-  .feedback-group {
+  .adminfeedback-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-bottom: 20px;
   }
   
-  .feedback-label {
+  .adminfeedback-label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
   }
   
-  .feedback-select,
-  .feedback-input {
+  .adminfeedback-select,
+  .adminfeedback-input {
     width: 100%;
     padding: 8px;
     border-radius: 4px;
     border: 1px solid #ccc;
   }
   
-  .feedback-input-group {
+  .adminfeedback-input-group {
     display: flex;
     align-items: center;
+    width: 100%;
     margin-bottom: 10px;
   }
   
-  .feedback-btn-delete {
+  .adminfeedback-btn-delete {
     margin-left: 10px;
     padding: 4px 8px;
     border: none;
@@ -112,12 +115,12 @@
     cursor: pointer;
   }
   
-  .feedback-btn-delete:disabled {
+  .adminfeedback-btn-delete:disabled {
     background-color: #ccc;
     cursor: not-allowed;
   }
   
-  .feedback-btn-add {
+  .adminfeedback-btn-add {
     padding: 4px 8px;
     border: none;
     border-radius: 4px;
@@ -126,42 +129,36 @@
     cursor: pointer;
   }
   
-  .feedback-btn-submit {
+  .adminfeedback-btn-submit {
     padding: 8px 16px;
     border: none;
     border-radius: 4px;
     background-color: #28a745;
     color: #fff;
-    cursor: pointer;
   }
   
-  .feedback-btn-submit:hover {
+  .adminfeedback-btn-submit:hover {
     background-color: #218838;
   }
   
-  .feedback-btn,
-  .feedback-select {
-    margin-top: 5px;
-  }
-  
-  .feedback-btn-add,
-  .feedback-btn-delete,
-  .feedback-btn-submit {
+  .adminfeedback-btn-add,
+  .adminfeedback-btn-delete,
+  .adminfeedback-btn-submit {
     display: inline-block;
-    margin-left: 10px;
+    width: max-content;
   }
   
-  .feedback-btn-add:hover,
-  .feedback-btn-delete:hover {
+  .adminfeedback-btn-add:hover,
+  .adminfeedback-btn-delete:hover {
     background-color: #0056b3;
   }
   
-  .feedback-btn-delete:focus {
+  .adminfeedback-btn-delete:focus {
     outline: none;
     box-shadow: 0 0 0 2px #fff, 0 0 0 4px #007bff;
   }
   
-  .feedback-btn-submit:focus {
+  .adminfeedback-btn-submit:focus {
     outline: none;
     box-shadow: 0 0 0 2px #fff, 0 0 0 4px #28a745;
   }

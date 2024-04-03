@@ -8,6 +8,7 @@ import Feedback from './Components/Feedback/Feedback';
 import Profile from './Components/Profile/Profile';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Timesheet from './Components/Timesheet/Timesheet';
+import ForgetPassword from './Components/ForgetPassword/ForgetPassword';
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
       <Route path="/feedback" element={<Feedback />} />
       <Route path="/timesheet" element={<Timesheet />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path='/forget-password' element={<ForgetPassword />} />
     </Routes>
     </BrowserRouter>
   );

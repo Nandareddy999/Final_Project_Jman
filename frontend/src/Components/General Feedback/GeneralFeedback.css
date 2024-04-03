@@ -1,18 +1,24 @@
 .custom-container {
-    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Adjust as needed */
 }
 
 .custom-card {
-    width: 400px;
+    width: 400px; /* Adjust as needed */
     padding: 20px;
-    border-radius: 10px;
-    background-color: #f8f9fa; /* Light gray */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.custom-card textarea {
-    resize: none;
+.custom-alert {
+    position: relative;
 }
 
-.custom-card button {
-    width: 100%;
+.custom-alert button {
+    position: absolute;
+    top: 0;
+    right: 0;
 }

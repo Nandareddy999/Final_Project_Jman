@@ -4,25 +4,16 @@ import './GeneralFeedback.css'; // Import CSS file for custom styling
 function GeneralFeedback() {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState('');
+    const [selectedUserName, setSelectedUserName] = useState(null);
     const [selectedUserEmail, setSelectedUserEmail] = useState('');
     const [feedback, setFeedback] = useState('');
+    const [successMessage, setSuccessMessage] = useState(null); // New state for success message
 
     useEffect(() => {
         // Fetch users from the backend when the component mounts
         fetchUsers();
     }, []); // Empty dependency array ensures this effect runs only once after initial render
 
-    useEffect(() => {
-        if (selectedUser !== '') {
-            const selectedUserData = users.find(user => user.id === selectedUser);
-            if (selectedUserData) {
-                setSelectedUserEmail(selectedUserData.email);
-            } else {
-                setSelectedUserEmail('');
-            }
-        }
-    }, [ users]);
-    
     const fetchUsers = async () => {
         try {
             const response = await fetch('http://localhost:5000/user');
@@ -49,6 +40,7 @@ function GeneralFeedback() {
         const selectedUserData = users.find(user => user._id === selectedUserId);
         if (selectedUserData) {
             setSelectedUserEmail(selectedUserData.email);
+            setSelectedUserName(selectedUserData.firstname +' ' + selectedUserData.lastname);
         } else {
             setSelectedUserEmail('');
         }
@@ -58,18 +50,54 @@ function GeneralFeedback() {
         setFeedback(e.target.value);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Selected User:", selectedUser);
-        console.log("Feedback:", feedback);
-        setSelectedUser('');
-        setFeedback('');
+        try {
+            const response = await fetch('http://localhost:5000/submit-user-feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userName: selectedUserName,
+                    email: selectedUserEmail,
+                    feedback: feedback
+                })
+            });
+            if (!response.ok) {
+                throw new Error('Failed to submit feedback');
+            }
+            const responseData = await response.json(); // Assuming the backend sends a JSON response
+            setSuccessMessage('Feedback submitted successfully'); // Set success message
+            setSelectedUser('');
+            setFeedback('');
+            // Handle the response from the backend as needed
+            console.log('Response from backend:', responseData);
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            alert('Failed to submit feedback');
+        }
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center custom-container">
+        <div className="container custom-container">
             <div className="custom-card">
                 <h2 className="text-center mb-4">General Feedback</h2>
+                <div className="text-center">
+                    {/* Render success message if successMessage is not null */}
+                    {successMessage && 
+                        <div className="alert alert-success alert-dismissible fade show custom-alert" role="alert">
+                            {successMessage}
+                            <button
+                                type="button"
+                                className="btn-close ms-auto" // Add ms-auto class for right alignment
+                                data-bs-dismiss="alert"
+                                aria-label="Close"
+                                onClick={() => setSuccessMessage(null)}
+                            ></button>
+                        </div>
+                    }
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Select User:</label>
@@ -94,11 +122,14 @@ function GeneralFeedback() {
                             placeholder="Enter your feedback..."
                         ></textarea>
                     </div>
-                    <button type="submit" className="btn btn-primary">Submit Feedback</button>
+                    <div className="text-end"> {/* Align button to the right */}
+                        <button type="submit" className="btn btn-primary">Submit Feedback</button>
+                    </div>
                 </form>
             </div>
         </div>
     );
+    
 }
 
 export default GeneralFeedback;

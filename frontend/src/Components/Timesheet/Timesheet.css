@@ -173,3 +173,84 @@
     padding: 0 10px 0 0;
     float: right;
 }
+
+/* For screens smaller than 768px (tablets) */
+@media (max-width: 768px) {
+    .body-content h1 {
+      width: 100%;
+    }
+  
+    .time1 {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .hours {
+      margin-right: 0;
+      margin-bottom: 20px;
+    }
+  
+    .time1 p {
+      margin: 10px;
+    }
+  
+    .select-content {
+      flex-direction: column;
+      align-items: center;
+      height: auto;
+    }
+  
+    .select-content button {
+      margin: 4px;
+    }
+  
+    .sheet-content {
+      margin-top: 0;
+    }
+  
+    .sheet-content p {
+      padding: 2px;
+    }
+  
+    .table-head th.col-double {
+      width: 100%;
+    }
+  
+    .thlast input {
+      display: none;
+    }
+  
+    .weeks {
+      width: auto;
+    }
+  
+    .end {
+      width: 100%;
+      padding: 10px;
+    }
+  
+    .end button {
+      width: 45%;
+      margin: 5px;
+    }
+  }
+  
+  /* For screens smaller than 576px (phones) */
+  @media (max-width: 576px) {
+    .body-content {
+      padding: 10px;
+    }
+  
+    .body-content h1 {
+      font-size: 25px;
+    }
+  
+    .table-head th {
+      font-size: small;
+    }
+  
+    .end button {
+      width: 100%;
+    }
+  }
+  
