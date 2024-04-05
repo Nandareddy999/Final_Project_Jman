@@ -2,15 +2,9 @@
 
 .feedback-container {
   display: flex;
-  flex-direction: column; /* Ensure content appears below buttons */
+  justify-content: center;
   align-items: center;
   /* height: 100vh; */
-}
-
-.button-container {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
 }
 
 .feedback-form {
@@ -52,8 +46,7 @@
   cursor: pointer;
 }
 
-.alert {  
-  display: none;
+.alert {
   width: 80%;
   max-width: 500px;
   margin-top: 20px;
@@ -64,3 +57,4 @@
   color: #fff;
   text-align: center;
 }
+

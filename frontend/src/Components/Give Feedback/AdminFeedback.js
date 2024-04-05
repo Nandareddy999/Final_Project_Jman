@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import AdminFeedback from './AdminFeedback';
-import ProjectFeedback from './ProjectFeedback';
-import './GiveFeedback.css'; // Import custom CSS file
+import './AdminFeedback.css'; // Import custom CSS file
 
-function GiveFeedback() {
+function AdminFeedback() {
   const [feedbackQuestions, setFeedbackQuestions] = useState([]);
   const [feedbackAnswers, setFeedbackAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState('');
-  const [showAdminFeedback, setShowAdminFeedback] = useState(false);
-  const [showProjectFeedback, setShowProjectFeedback] = useState(false);
 
   useEffect(() => {
     const fetchFeedbackQuestions = async () => {
@@ -78,53 +74,39 @@ function GiveFeedback() {
     }
   };
 
-  const handleAdminFeedbackClick = () => {
-    setShowAdminFeedback(true);
-    setShowProjectFeedback(false); // Close other components if needed
-  };
-
-  const handleProjectFeedbackClick = () => {
-    setShowProjectFeedback(true);
-    setShowAdminFeedback(false); // Close other components if needed
-  };
-
   return (
     <div className="feedback-container">
-      <div className="button-container">
-        <button onClick={handleAdminFeedbackClick}>Admin Feedback</button>
-        <button onClick={handleProjectFeedbackClick}>Project Feedback</button>
-      </div>
-      <div className="content">
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <>
-            {showAdminFeedback ? (
-              <AdminFeedback
-                questions={feedbackQuestions}
-                answers={feedbackAnswers}
-                onAnswerChange={handleAnswerChange}
-                onSubmit={handleSubmit}
-                successMessage={successMessage}
-              />
-            ) : showProjectFeedback ? (
-              <ProjectFeedback
-                questions={feedbackQuestions}
-                answers={feedbackAnswers}
-                onAnswerChange={handleAnswerChange}
-                onSubmit={handleSubmit}
-                successMessage={successMessage}
-              />
-            ) : (
-              <p>Please select a button</p>
-            )}
-          </>
-        )}
-      </div>
+      {loading ? (
+        <p>Loading...</p>
+      ) : feedbackQuestions.length === 0 ? (
+        <p>No feedback questions available</p>
+      ) : (
+        <div className="feedback-form">
+          <h2>Feedback Questions</h2>
+          <form onSubmit={handleSubmit}>
+            <ul>
+              {feedbackQuestions.map((question, index) => (
+                <li key={question._id}>
+                  <p>{question.text}</p>
+                  <input
+                    type="text"
+                    value={feedbackAnswers[index] || ''}
+                    onChange={(event) => handleAnswerChange(index, event)}
+                  />
+                </li>
+              ))}
+            </ul>
+            <button type="submit">Submit Feedback</button>
+          </form>
+        </div>
+      )}
+      {successMessage && 
+        <div className="alert alert-success" role="alert">
+          {successMessage}
+        </div>
+      }
     </div>
   );
 }
 
-export default GiveFeedback;
-
-
+export default AdminFeedback;

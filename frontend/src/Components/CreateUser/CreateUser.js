@@ -47,23 +47,26 @@ function CreateUser() {
 
   const validateForm = () => {
     const newErrors = {};
-
+  
     if (firstname.trim() === '') {
       newErrors.firstname = 'Firstname is required.';
     }
-
+  
     if (lastname.trim() === '') {
       newErrors.lastname = 'Lastname is required.';
     }
-
+  
     if (email.trim() === '') {
       newErrors.email = 'Email is required.';
+    } else if (!email.includes('@') || email.split('@').length !== 2 || email.split('@')[1].split('.').length < 2) {
+      newErrors.email = 'Invalid email format.';
     }
-
+  
     setErrors(newErrors);
-
+  
     return Object.keys(newErrors).length === 0;
   };
+  
 
   // Define handlePasswordOptionChange function
   const handlePasswordOptionChange = (e) => {

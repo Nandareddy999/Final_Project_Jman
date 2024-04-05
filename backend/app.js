@@ -2,9 +2,12 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const { MongoClient } = require("mongodb");
 const bodyParser = require("body-parser");
+const { mongoose } = require('mongoose');
 const { v4: uuidv4 } = require("uuid"); // Import UUID generator
 const otpGenerator = require('otp-generator');
 const nodemailer = require('nodemailer');
+const { Schema } = mongoose;
+
 
 const app = express();
 app.use(require("cors")());
@@ -27,7 +30,10 @@ let db,
   adminFeedbackCollection,
   userFeedbackCollection,
   userResponseCollection,
-  timeSheetCollection;
+  timeSheetCollection,
+  otpDataCollection,
+  questionCollection,
+  ratingCollection;
 
 client
   .connect()
@@ -40,6 +46,9 @@ client
     userFeedbackCollection = db.collection("UserFeedback");
     userResponseCollection = db.collection("UserResponse");
     timeSheetCollection = db.collection("TimeSheetData");
+    otpDataCollection = db.collection("OtpData");
+    questionCollection = db.collection( "Questions" );
+    ratingCollection = db.collection("Rating") ;
   })
   .catch((err) => {
     console.log(err);
@@ -92,6 +101,8 @@ const timeSheetSchema = {
     type: Date,
     required: true,
   },
+  userEmail : String,
+  UserName : String,
   activities: [
     {
       name: {
@@ -127,6 +138,53 @@ const timeSheetSchema = {
     type: Number,
     required: true,
   },
+};
+
+const OTPSchema = {
+  email: {
+      type: String,
+      required: true,
+      unique: true
+  },
+  otp: {
+      type: String,
+      required: true
+  },
+  createdAt: {
+      type: Date,
+      default: Date.now,
+      expires: 300 // OTP documents expire after 5 minutes (300 seconds)
+  }
+};
+
+const questionSchema = {
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'UserData', // Assuming there's a User model referenced by userId
+    required: true
+  },
+  questions: [{
+    text: {
+      type: String,
+      required: true
+    }
+  }] // Array of question objects
+};
+
+
+const feedbackSchema = {
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  questionCollection: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'QuestionCollection',
+    required: true
+  },
+  ratings: [Number],
+  feedback: String
 };
 
 // Express Routes
@@ -251,40 +309,97 @@ app.post('/send-email', async (req, res) => {
   }
 });
 
+
 app.post("/send-otp", async (req, res) => {
   try {
-    const { email } = req.body;
+      const { email } = req.body;
 
-    const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
-    
-    console.log('Generated OTP:', otp);
+      // Check if the user already exists in otpDataCollection
+      const existingUser = await otpDataCollection.findOne({ email });
 
-    const mailOptions = {
-      from: 'mutukundu@jmangroup.com',
-      to: email,
-      subject: 'Account Created',
-      text: `Hello User password reset has been on progress. Your otp is: ${otp}\n\n Please use this otp and reset your password.`,
-      html: `<p>Hello User password reset has been on progress. Your otp is:  <strong>${otp}</strong>. Please use this otp and reset your password.`
-    };
+      // Generate new OTP
+      const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
+      console.log('Generated OTP:', otp);
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-          console.error('Error sending email:', error);
-          res.status(500).json({ error: 'Error sending email' });
+      // Update or insert the OTP record
+      if (existingUser) {
+          await otpDataCollection.updateOne({ email }, { $set: { otp } });
       } else {
-          console.log('Email sent:', info.response);
-          res.status(200).json({ message: 'Email sent successfully' });
+          await otpDataCollection.insertOne({ email, otp });
       }
-    });
 
+      // Send OTP via email
+      const mailOptions = {
+          from: 'mutukundu@jmangroup.com',
+          to: email,
+          subject: 'Password Reset OTP',
+          text: `Your OTP is: ${otp}. Please use this OTP to reset your password.`,
+      };
 
-    // Respond with success message
-    res.status(200).json({ message: 'OTP sent successfully' });
+      transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              console.error('Error sending email:', error);
+              res.status(500).json({ error: 'Error sending email' });
+          } else {
+              console.log('Email sent:', info.response);
+              res.status(200).json({ message: 'OTP sent successfully' });
+          }
+      });
   } catch (error) {
-    console.error("Error Sending Otp:", error);
-    res.status(500).json({ error: "Error Sending Otp" });
+      console.error("Error Sending Otp:", error);
+      res.status(500).json({ error: "Error Sending Otp" });
   }
 });
+
+
+
+app.post("/verify-otp", async (req, res) => {
+  try {
+      const { otp, email, password } = req.body;
+
+      // Find the user based on the provided email in otpData collection
+      const userInOtpData = await otpDataCollection.findOne({email: email});
+
+      if (!userInOtpData) {
+          return res.status(404).json({ error: 'User not found' });
+      }
+      // Check if the OTP matches
+      if (userInOtpData.otp !== otp) {
+          return res.status(400).json({ error: 'Invalid OTP' });
+      }
+
+      // Find the user based on the email in userData collection
+      const userInUserData = await userCollection.findOne({ email });
+
+      if (!userInUserData) {
+          return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      console.log("Hashed Password:", hashedPassword);
+
+      // Update the user's password
+      userInUserData.password = hashedPassword;
+
+      console.log("User Object Before Update:", userInUserData);
+
+      // Ensure that the update operation is awaited
+      await userCollection.updateOne({ email: email }, { $set: { password: hashedPassword } });
+
+      console.log("User Object After Update:", userInUserData);
+
+      // Clear the OTP field after successful verification
+      userInOtpData.otp = null;
+
+      res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+      console.error("Error Verifying OTP:", error);
+      res.status(500).json({ error: "Error Verifying OTP" });
+  }
+});
+
 
 
 app.post("/admin/login", async (req, res) => {
@@ -524,15 +639,149 @@ app.post("/user-response", async (req, res) => {
   }
 });
 
+
+const feedbackQuestions = [
+  { text: 'How satisfied are you with the project?' },
+  { text: 'Did you face any challenges during the week?' },
+  { text : 'How effective was the communication within your team during the week?' },
+  { text : 'Are there any areas where you believe improvement is needed in our processes or workflows?' },
+  { text : 'Do you have any suggestions or ideas for enhancing team collaboration and efficiency?' }
+  // Add more questions as needed
+];
+
+
+async function storeQuestionsForUser(userId, questions) {
+  try {
+    // Check if questions already exist for the user
+    const existingQuestions = await questionCollection.findOne({ userId: userId });
+
+    // If questions already exist, return without saving again
+    if (existingQuestions) {
+      console.log('Questions already exist for this user:', existingQuestions);
+      return existingQuestions;
+    }
+
+    // Insert questions for the user if they don't already exist
+    const result = await questionCollection.insertOne({ userId: userId, questions: questions });
+    console.log('Stored questions:', result.ops);
+    return result.ops;
+  } catch (error) {
+    console.error('Error storing questions:', error);
+    throw error; // Propagate the error to the caller
+  }
+}
+
+
+// Assuming you have a route handler to fetch user ID based on email
+app.get('/userId', async (req, res) => {
+  try {
+    const userEmail = req.query.email;
+
+    // Assuming you have a function to find the user by email and return their ID
+    const user = await userCollection.findOne({ email: userEmail });
+
+    console.log(user._id);
+
+    if (user) {
+      return res.json({ userId: user._id });
+    } else {
+      return res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching user ID:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Assuming you have a route handler to fetch questions based on user ID
+app.get('/questions', async (req, res) => {
+  try {
+    const userid = req.query.userId;
+    console.log(userid);
+    // const questions = await questionCollection.findOne({ userId: userid });
+    // console.log(questions);
+
+    const questionsAll = await questionCollection.find();
+    const questions = ((await questionsAll.toArray()).filter(q => q.userId.toString() === userid))[0];
+    console.log(questions);
+
+    return res.json(questions.questions);
+  } catch (error) {
+    console.error('Error fetching questions:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.post('/submit-project-feedback', async (req, res) => {
+  try {
+    const { user, ratings, feedback } = req.body;
+
+    // Find the user ID based on the email
+    const userData = await userCollection.findOne({ email: user.email });
+    if (!userData) {
+      return res.status(400).json({ error: 'User not found' });
+    }
+
+    // Find the question data based on the user ID
+    const questionData = await questionCollection.findOne({ userId: userData._id });
+    if (!questionData) {
+      return res.status(400).json({ error: 'Question data not found' });
+    }
+
+    // Extract userId and questionId
+    const userId = questionData.userId;
+    const questionId = questionData._id;
+
+    // Check if a record with the given questionId exists
+    const existingRecord = await ratingCollection.findOne({ questionId });
+
+    if (existingRecord) {
+      // Update existing record
+      await ratingCollection.updateOne(
+        { questionId },
+        { $set: { ratings, feedback } }
+      );
+    } else {
+      // Insert new record
+      await ratingCollection.insertOne({ userId, questionId, ratings, feedback });
+    }
+
+    res.status(201).json({ message: 'Feedback submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting feedback:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 app.post("/timesheet-data", async (req, res) => {
   try {
     const timesheetData = req.body; // Assuming data is sent in the request body
+    const userEmail = timesheetData.userEmail;
+
+    const user = await userCollection.findOne({ email: userEmail });
+    const userId = user._id;
+
+    if(!user) {
+      return res.status(400).json({message:"No such user found."}); // Return here to exit the function without continuing
+    }
+
+    const userName = user.firstname + ' ' + user.lastname;
+
+    timesheetData.userName = userName;
+    
     const timesheet = await timeSheetCollection.insertOne(timesheetData);
-    res.json(timesheet);
+    const response = await res.json(timesheet); 
+    if(response) {
+      await storeQuestionsForUser(userId, feedbackQuestions);
+    }
+    return response;
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 // Start the server

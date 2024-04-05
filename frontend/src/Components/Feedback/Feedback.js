@@ -137,7 +137,7 @@ function Feedback() {
           <option value="">Select User</option>
           {users.map(user => (
             <option key={user._id} value={user._id}>
-              {user.firstname + ' ' + user.lastname}
+              {(user.firstname + ' ' + user.lastname) || (user.first_name + ' ' + user.last_name)}
             </option>
           ))}
         </select>

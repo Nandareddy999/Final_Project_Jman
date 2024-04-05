@@ -1,0 +1,27 @@
+.project-feedback-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .feedback-questions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .feedback-question {
+    text-align: center;
+  }
+  
+  .feedback-input {
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .feedback-submit {
+    margin-top: 20px;
+  }
+  

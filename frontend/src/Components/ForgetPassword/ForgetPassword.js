@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 
 function ForgetPassword() {
     const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ function ForgetPassword() {
     const [otpSent, setOtpSent] = useState(false);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const sendOtp = async () => {
         try {
@@ -17,7 +19,7 @@ function ForgetPassword() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email }), // Assuming 'email' is the state variable holding the user's email
+                body: JSON.stringify({ email }),
             });
             if (response.ok) {
                 setOtpSent(true);
@@ -32,18 +34,24 @@ function ForgetPassword() {
     const handleSubmit = async () => {
         try {
             // Make an API call to your backend to verify OTP and change password
-            const response = await fetch('hhtp://localhost:5000/verify-otp', {
+            const response = await fetch('http://localhost:5000/verify-otp ', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, otp, password }),
+                body: JSON.stringify({ otp, email, password }),
             });
             if (response.ok) {
                 console.log('Password changed successfully');
-                // Optionally, you can redirect the user to a different page or display a success message
             } else {
-                console.error('Failed to change password:', response.statusText);
+                const data = await response.json();
+                if (data.error === 'wrong_otp') {
+                    setErrorMessage('Wrong OTP entered.');
+                } else if (data.error === 'password_mismatch') {
+                    setErrorMessage('Passwords do not match.');
+                } else {
+                    setErrorMessage('Failed to change password.');
+                }
             }
         } catch (error) {
             console.error('Failed to change password:', error.message);
@@ -94,11 +102,18 @@ function ForgetPassword() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>
+                    {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit}
+                        disabled={!otp || !password || !confirmPassword}
+                    >
                         Save Password
                     </Button>
                 </div>
             )}
+            <Link to="/">Go to Login</Link>
         </div>
     );
 }

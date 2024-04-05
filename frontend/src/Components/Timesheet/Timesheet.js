@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import "./Timesheet.css";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,20 +20,16 @@ function Timesheet() {
         salesActivity: [, , , , , , ],
     });
 
-    const handleHourChange = (activity, dayIndex, e) => {
-        const value = e.target.value;
-        if (/^\d*$/.test(value) && parseInt(value) <= 10 || value === '') {
-            const newHoursData = { ...hoursData };
-            newHoursData[activity][dayIndex] = value;
-            setHoursData(newHoursData);
-        }
-    };
+    const [submitSuccess, setSubmitSuccess] = useState(false);
 
+    const user =  JSON.parse(localStorage.getItem('user'));
     const saveTimesheet = async () => {
         try {
             const timesheetData = {
                 startDate: startDate,
                 endDate: endDate,
+                userEmail : user.email,
+                userName : "",
                 activities: [
                     {
                         name: 'BAU Activity',
@@ -51,10 +47,20 @@ function Timesheet() {
             };
             const response = await axios.post('http://localhost:5000/timesheet-data', timesheetData);
             console.log(response.data); // Log the response from the server
+            setSubmitSuccess(true);
             // Optionally, you can show a success message to the user
         } catch (error) {
             console.error('Error saving timesheet:', error.message);
             // Optionally, you can show an error message to the user
+        }
+    };
+
+    const handleHourChange = (activity, dayIndex, e) => {
+        const value = e.target.value;
+        if (/^\d*$/.test(value) && parseInt(value) <= 10 || value === '') {
+            const newHoursData = { ...hoursData };
+            newHoursData[activity][dayIndex] = value;
+            setHoursData(newHoursData);
         }
     };
     
@@ -85,7 +91,6 @@ function Timesheet() {
     };
 
 
-    // Function to handle clicking '<' to go to the previous week
     const handlePreviousWeek = () => {
         const prevWeekStart = new Date(startDate);
         prevWeekStart.setDate(prevWeekStart.getDate() - 7);
@@ -93,8 +98,16 @@ function Timesheet() {
         prevWeekEnd.setDate(prevWeekEnd.getDate() - 7);
         setStartDate(prevWeekStart);
         setEndDate(prevWeekEnd);
+        // Clear the entered data when changing the date
+        setHoursData({
+            bauActivity: [, , , , , , ],
+            salesActivity: [, , , , , , ],
+        });
+        
+        document.getElementById('bauComment').value = '';
+        document.getElementById('salesComment').value = '';
     };
-
+    
     // Function to handle clicking '>' to go to the next week
     const handleNextWeek = () => {
         const nextWeekStart = new Date(startDate);
@@ -103,8 +116,16 @@ function Timesheet() {
         nextWeekEnd.setDate(nextWeekEnd.getDate() + 7);
         setStartDate(nextWeekStart);
         setEndDate(nextWeekEnd);
+        // Clear the entered data when changing the date
+        setHoursData({
+            bauActivity: [, , , , , , ],
+            salesActivity: [, , , , , , ],
+        });
+        
+        document.getElementById('bauComment').value = '';
+        document.getElementById('salesComment').value = '';
     };
-
+    
     // Function to handle clicking Allocation Extension button
     const handleExtensionClick = () => {
         setShowExtension(!showExtension);
@@ -113,6 +134,13 @@ function Timesheet() {
     return (
         <div className='body-content'>
             <h1>Timesheet</h1>
+
+            {submitSuccess && (
+                <div className="alert alert-success alert-dismissible" role="alert">
+                    Timesheet submitted successfully!
+                    <button type="button" className="btn-close" aria-label="Close" onClick={() => setSubmitSuccess(false)}></button>
+                </div>
+            )}
             <div className='time1'>
                 <p className='hours'>Total Hours : {calculateGrandTotalHours()}</p>
                 <p>
@@ -268,8 +296,7 @@ function Timesheet() {
                 </table>
             </div>
             <div className='end'>
-                <button className='btn1' onClick={saveTimesheet}>Save</button>
-                <button className='btn2'>Submit <FontAwesomeIcon icon={faArrowRight} className='right-btn'/></button>
+                <button className='btn2' onClick={saveTimesheet}>Submit <FontAwesomeIcon icon={faArrowRight} className='right-btn'/></button>
             </div>
         </div>
     )
