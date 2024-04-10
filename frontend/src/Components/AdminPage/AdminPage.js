@@ -46,53 +46,35 @@ function AdminPage() {
   return (
     <div>
       <div className="navbar-top">
-        <MDBNavbar expand='lg' light>
-          <MDBContainer fluid>
-            <MDBNavbarToggler
-              aria-expanded='false'
-              aria-label='Toggle navigation'
-              onClick={() => setOpenNavSecond(!openNavSecond)}
-            >
-              <MDBIcon icon='bars' fas />
-            </MDBNavbarToggler>
-            <div>
-              <MDBCollapse navbar open={openNavSecond}>
-                <MDBNavbarNav>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'home'} onClick={() => handleOptionClick('home')}>
-                      Home
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'create-user'} onClick={() => handleOptionClick('create-user')}>
-                      Create User
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'feedback'} onClick={() => handleOptionClick('feedback')}>
-                      Feedback
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'timesheet'} onClick={() => handleOptionClick('timesheet')}>
-                      Timesheet
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'profile'} onClick={() => handleOptionClick('profile')}>
-                      Profile
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" onClick={handleLogout}>
-                      Logout
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                </MDBNavbarNav>
-              </MDBCollapse>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <div className="container-fluid">
+            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarNav">
+              <ul className="navbar-nav">
+                <li className="nav-item">
+                  <a className={"nav-link" + (selectedOption === 'home' ? " active" : "")} href="#" onClick={() => handleOptionClick('home')}>Home</a>
+                </li>
+                <li className="nav-item">
+                  <a className={"nav-link" + (selectedOption === 'create-user' ? " active" : "")} href="#" onClick={() => handleOptionClick('create-user')}>Create User</a>
+                </li>
+                <li className="nav-item">
+                  <a className={"nav-link" + (selectedOption === 'feedback' ? " active" : "")} href="#" onClick={() => handleOptionClick('feedback')}>Feedback</a>
+                </li>
+                <li className="nav-item">
+                  <a className={"nav-link" + (selectedOption === 'timesheet' ? " active" : "")} href="#" onClick={() => handleOptionClick('timesheet')}>Timesheet</a>
+                </li>
+                <li className="nav-item">
+                  <a className={"nav-link" + (selectedOption === 'profile' ? " active" : "")} href="#" onClick={() => handleOptionClick('profile')}>Profile</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#" onClick={handleLogout}>Logout</a>
+                </li>
+              </ul>
             </div>
-          </MDBContainer>
-        </MDBNavbar>
+          </div>
+        </nav>
       </div>
       
       <div>

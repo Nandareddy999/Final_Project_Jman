@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { MDBContainer, MDBNavbar, MDBNavbarToggler, MDBNavbarNav, MDBNavbarItem, MDBNavbarLink, MDBIcon, MDBCollapse } from 'mdb-react-ui-kit';
 import './UserPage.css';
 import Profile from '../Profile/Profile';
 import Timesheet from '../Timesheet/Timesheet';
@@ -45,61 +44,79 @@ function UserPage() {
   }
 
   return (
-    <div>
-      <div className="navbar-top">
-        <MDBNavbar expand='lg' light>
-          <MDBContainer fluid>
-            <MDBNavbarToggler
-              aria-expanded='false'
-              aria-label='Toggle navigation'
-              onClick={() => setOpenNavSecond(!openNavSecond)}
-            >
-              <MDBIcon icon='bars' fas />
-            </MDBNavbarToggler>
-            <div>
-              <MDBCollapse navbar open={openNavSecond}>
-                <MDBNavbarNav>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'home'} onClick={() => handleOptionClick('home')}>
-                      Home
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'timesheet'} onClick={() => handleOptionClick('timesheet')}>
-                      Timesheet
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'GiveFeedback'} onClick={() => handleOptionClick('GiveFeedback')}>
-                      Give Feedback
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'GeneralFeedback'} onClick={() => handleOptionClick('GeneralFeedback')}>
-                      General Feedback 
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" active={selectedOption === 'profile'} onClick={() => handleOptionClick('profile')}>
-                      Profile
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                  <MDBNavbarItem>
-                    <MDBNavbarLink className="navbar-link" onClick={handleLogout}>
-                      Logout
-                    </MDBNavbarLink>
-                  </MDBNavbarItem>
-                </MDBNavbarNav>
-              </MDBCollapse>
-            </div>
-          </MDBContainer>
-        </MDBNavbar>
-      </div>
-      
       <div>
-        {renderComponent()}
+        <div className="navbar-top">
+          <nav className="navbar navbar-expand-lg navbar-light bg-light">
+            <div className="container-fluid">
+              <button
+                className="navbar-toggler"
+                type="button"
+                onClick={() => setOpenNavSecond(!openNavSecond)}
+              >
+                <span className="navbar-toggler-icon"></span>
+              </button>
+              <div
+                className={`collapse navbar-collapse ${openNavSecond ? 'show' : ''}`}
+              >
+                <ul className="navbar-nav">
+                  <li className="nav-item">
+                    <button
+                      className={`nav-link btn ${selectedOption === 'home' ? 'active' : ''}`}
+                      onClick={() => handleOptionClick('home')}
+                    >
+                      Home
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className={`nav-link btn ${selectedOption === 'timesheet' ? 'active' : ''}`}
+                      onClick={() => handleOptionClick('timesheet')}
+                    >
+                      Timesheet
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className={`nav-link btn ${selectedOption === 'GiveFeedback' ? 'active' : ''}`}
+                      onClick={() => handleOptionClick('GiveFeedback')}
+                    >
+                      Give Feedback
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className={`nav-link btn ${selectedOption === 'GeneralFeedback' ? 'active' : ''}`}
+                      onClick={() => handleOptionClick('GeneralFeedback')}
+                    >
+                      General Feedback
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className={`nav-link btn ${selectedOption === 'profile' ? 'active' : ''}`}
+                      onClick={() => handleOptionClick('profile')}
+                    >
+                      Profile
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link btn"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </div>
+  
+        <div>
+          {renderComponent()}
+        </div>
       </div>
-    </div>
   );
 }
 

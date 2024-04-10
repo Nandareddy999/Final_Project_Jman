@@ -650,7 +650,7 @@ const feedbackQuestions = [
 ];
 
 
-async function storeQuestionsForUser(userId, questions) {
+async function storeQuestionsForUser(userId, startDate, endDate, questions) {
   try {
     // Check if questions already exist for the user
     const existingQuestions = await questionCollection.findOne({ userId: userId });
@@ -662,9 +662,9 @@ async function storeQuestionsForUser(userId, questions) {
     }
 
     // Insert questions for the user if they don't already exist
-    const result = await questionCollection.insertOne({ userId: userId, questions: questions });
-    console.log('Stored questions:', result.ops);
-    return result.ops;
+    const result = await questionCollection.insertOne({ userId: userId, startDate, endDate, questions: questions });
+    console.log('Stored questions:', result);
+    return result;
   } catch (error) {
     console.error('Error storing questions:', error);
     throw error; // Propagate the error to the caller
@@ -697,12 +697,14 @@ app.get('/userId', async (req, res) => {
 app.get('/questions', async (req, res) => {
   try {
     const userid = req.query.userId;
+    const date = req.query.date;
     console.log(userid);
     // const questions = await questionCollection.findOne({ userId: userid });
     // console.log(questions);
 
     const questionsAll = await questionCollection.find();
     const questions = ((await questionsAll.toArray()).filter(q => q.userId.toString() === userid))[0];
+    
     console.log(questions);
 
     return res.json(questions.questions);
@@ -772,9 +774,13 @@ app.post("/timesheet-data", async (req, res) => {
     timesheetData.userName = userName;
     
     const timesheet = await timeSheetCollection.insertOne(timesheetData);
+
+    console.log(timesheetData);
+    const startDate = timesheetData.startDate;
+    const endDate = timesheetData.endDate;
     const response = await res.json(timesheet); 
     if(response) {
-      await storeQuestionsForUser(userId, feedbackQuestions);
+      await storeQuestionsForUser(userId, startDate, endDate, feedbackQuestions);
     }
     return response;
   } catch (error) {

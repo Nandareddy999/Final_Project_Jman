@@ -1,0 +1,16 @@
+# models/sources.yml
+
+version: 2
+
+sources:
+  - name: NANDAJMAN
+    database: NANDAJMAN
+    schema: NANDAJMAN
+    tables:
+      - name: FEEDBACK
+      - name: TIMESHEET
+      - name: QUESTIONS
+      - name: USERDATA
+
+        
+  

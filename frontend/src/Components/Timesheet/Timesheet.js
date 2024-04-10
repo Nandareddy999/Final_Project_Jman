@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState } from 'react';
 import "./Timesheet.css";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,7 +16,7 @@ function Timesheet() {
     const [endDate, setEndDate] = useState(sunday); 
     const [showExtension, setShowExtension] = useState(false);
     const [hoursData, setHoursData] = useState({
-        bauActivity: [, , , , , ,  ],
+        bauActivity: [, , , , , , ],
         salesActivity: [, , , , , , ],
     });
 
@@ -47,6 +47,13 @@ function Timesheet() {
             };
             const response = await axios.post('http://localhost:5000/timesheet-data', timesheetData);
             console.log(response.data); // Log the response from the server
+            setHoursData({
+                bauActivity: [, , , , , , ],
+                salesActivity: [, , , , , , ],
+            });
+            document.getElementById('bauComment').value = '';
+            document.getElementById('salesComment').value = '';
+    
             setSubmitSuccess(true);
             // Optionally, you can show a success message to the user
         } catch (error) {
@@ -211,7 +218,6 @@ function Timesheet() {
                             <td style={{ color: calculateTotalHours('bauActivity') > 10 ? 'red' : 'black' }}>
                                 {calculateTotalHours('bauActivity')}
                             </td>
-                            <td className="td2"><input type="text" className="form-control" /></td>
                         </tr>
                         <tr>
                             <td colSpan={2}>Sales Activity</td>
@@ -244,7 +250,6 @@ function Timesheet() {
                             <td style={{ color: calculateTotalHours('salesActivity') > 10 ? 'red' : 'black' }}>
                                 {calculateTotalHours('salesActivity')}
                             </td>
-                            <td className="td2"><input type="text" className="form-control" /></td>
                         </tr>
                         <tr>
                             <td colSpan={2}>Totals Hours</td>
@@ -260,7 +265,6 @@ function Timesheet() {
                             <td style={{ color: calculateGrandTotalHours() > 10 ? 'red' : 'black' }}>
                                 {calculateGrandTotalHours()}
                             </td>
-                            <td></td>
                         </tr>
                         <tr>
                             <td colSpan={2}>Machine Hours</td>
