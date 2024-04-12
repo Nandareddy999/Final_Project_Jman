@@ -16,7 +16,7 @@ casted_data AS (
         CAST(username AS VARCHAR(255)) AS username,
         CAST(useremail AS VARCHAR(255)) AS useremail,
         CAST(comment AS VARCHAR(255)) AS comment,
-        ARRAY_CONSTRUCT(CAST(totalhoursperday AS VARCHAR)) AS totalhoursperday,
+        CAST(totalhoursperday AS VARCHAR) AS totalhoursperday,
         CAST(totalhours AS INT) AS totalhours,
         CAST(activities AS VARCHAR(255)) AS activities
     FROM Timesheet

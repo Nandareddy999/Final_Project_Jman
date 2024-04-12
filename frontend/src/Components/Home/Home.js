@@ -9,8 +9,12 @@ function Home() {
     <div className="home-container">
       <div className="home-content">
         <h2>Welcome, {user && user.email}!</h2>
-        <p>This is the home page where you can find important information.</p>
-        <p>Please take some time to read through the content.</p>
+        <p>Welcome to our innovative hub where creativity thrives, and possibilities abound. <br/>
+          With a relentless commitment to excellence, we craft solutions that redefine industries and shape the future. <br/>
+          Our diverse team of visionaries collaborates seamlessly to push boundaries and exceed expectations. 
+          <br/>From cutting-edge technology to unparalleled customer service, we're dedicated to empowering our partners and driving success. 
+          <br/><br/>Join us on this journey of innovation and discovery. Together, let's unlock new horizons and make an impact that resonates globally.
+        </p>
       </div>
     </div>
   );
