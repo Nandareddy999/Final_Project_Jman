@@ -16,3 +16,4 @@ casted_data AS (
     FROM Questions
 )
 SELECT * FROM casted_data
+

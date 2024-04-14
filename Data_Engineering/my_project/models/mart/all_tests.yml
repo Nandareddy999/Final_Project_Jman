@@ -2,81 +2,118 @@ version: 2
 
 models:
   - name: feedback
-    description: Table containing information about Employee Timesheets.
+    description: Table containing information about Employee Feedback.
     columns:
       - name: _id
         description: Unique identifier for each customer.
         tests:
           - primarykey
       - name: questionid
-        description: Date when the customer first placed an order.
+        description: Unique question id created for a user.
       - name: startdate
-        description: Date of the customer's most recent order.
+        description: Start Date of the project.
         tests:
           - Date
       - name: enddate
-        description: Total value of all orders placed by the customer.
+        description: End Date of the project.
         tests:
           - Date
       - name: username
-        description: Total number of orders placed by the customer.
+        description: Name of the user.
         tests:
           - not null
       - name: ratings
-        description: Number of days between the customer's first and most recent orders.
+        description: Rating given by user for the project.
         tests:
           - not null
       - name: feedback
-        description: Number of days between the customer's first and most recent orders.
+        description: Feedback given by the user.
         tests:
           - not null
 
 
-
-  # - name: market
-  #   description: Table containing information about customer orders.
-  #   columns:
-  #     - name: Customer_Name
-  #       description: Name of the customer.
-  #     - name: Province
-  #       description: Province where the customer is located.
-  #     - name: Region
-  #       description: Region where the customer is located.
-  #     - name: Customer_Segment
-  #       description: Segment to which the customer belongs.
-  #     - name: Cust_id
-  #       description: Identifier for the customer.
-  #     - name: market_order_id
-  #       description: Identifier for the market order.
-  #     - name: product_id
-  #       description: Identifier for the product.
-  #     - name: shipment_id
-  #       description: Identifier for the shipment.
-  #     - name: customer_id
-  #       description: Identifier for the customer.
-  #     - name: Sales
-  #       description: Total sales amount for the order.
-  #     - name: Discount
-  #       description: Discount applied to the order.
-  #     - name: Order_Quantity
-  #       description: Quantity of products ordered.
-  #     - name: Profit
-  #       description: Profit generated from the order.
-  #     - name: Shipping_Cost
-  #       description: Cost of shipping for the order.
-  #     - name: Product_Base_Margin
-  #       description: Base margin of the product.
-  #     - name: Order_ID
-  #       description: Identifier for the order.
-  #     - name: Order_Date
-  #       description: Date when the order was placed.
-  #     - name: Order_Priority
-  #       description: Priority of the order.
-  #     - name: Ord_id
-  #       description: Identifier for the order.
-  #     - name: Ship_Date
-  #       description: Date when the order was shipped.
-  #     - name: delayed_in_days
-  #       description: Number of days the order was delayed.
-  #     - name: support
-  #       description: Support information for the order.
+  - name: timesheet
+    description: Table containing information about Employee Timesheets.
+    columns:
+      - name: _id
+        description: Unique identifier for each customer.
+        tests:
+          - primarykey
+      - name: startdate
+        description: Start Date of the project.
+        tests:
+          - Date
+      - name: enddate
+        description: End Date of the project.
+        tests:
+          - Date
+      - name: username
+        description: Name of the user.
+        tests:
+          - not null
+      - name: useremail
+        description: email of the user.
+        tests:
+          - not null
+      - name: comment
+        description: Comment given by the user.
+        tests:
+          - not null
+      -name: totalhoursperday
+        description: Total hours worked by user per day.
+        tests: 
+          - not null
+      -name: totalhours
+        description: Total hours worked by user in a week.
+        tests: 
+          - not null
+      -name: activities
+        description: Type of project worked by user.
+        tests: 
+          - not null
+    
+  - name: questions
+    description: Table containing information about Employee questions.
+    columns:
+      - name: _id
+        description: Unique identifier for each customer.
+        tests:
+          - primarykey
+      - name: userid
+        description: Userid created for a user.
+        tests:
+          - not null
+      - name: questions
+        description: questions created for user based on project.
+        tests:
+          - not null
+  
+  - name: user
+    description: Table containing information about Employee.
+    columns:
+      - name: _id
+        description: Unique identifier for each customer.
+        tests:
+          - primarykey
+      - name: firstname
+        description: first name of the user.
+        tests:
+          - not null
+      - name: lastname
+        description: last name of the user.
+        tests:
+          - not null
+      - name: email
+        description: email name of the user.
+        tests:
+          - not null
+      - name: password
+        description: password name of the user.
+        tests:
+          - not null
+      - name: role
+        description: Role of the user.
+        tests:
+          - not null
+  
+  
